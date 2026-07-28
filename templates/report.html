@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>Student Report</title>
+
+</head>
+
+<body>
+
+<h2>Search Student</h2>
+
+<form method="POST">
+
+Roll Number
+
+<input type="text" name="roll">
+
+<input type="submit" value="Search">
+
+</form>
+
+{% if student %}
+
+<hr>
+
+<h3>Student Report</h3>
+
+<p>Name : {{student.name}}</p>
+
+<p>Roll : {{student.roll}}</p>
+
+<p>English : {{student.english}}</p>
+
+<p>Maths : {{student.maths}}</p>
+
+<p>Science : {{student.science}}</p>
+
+<p>Total : {{student.total}}</p>
+
+<p>Percentage : {{student.percentage}}</p>
+
+<p>Grade : {{student.grade}}</p>
+
+{% endif %}
+
+</body>
+
+</html>
