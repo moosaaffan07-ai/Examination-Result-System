@@ -24,6 +24,20 @@ def add_student():
         total = english + maths + science
         percentage = total / 3
 
+        # Calculate Grade
+        if percentage >= 90:
+           grade = "A+"
+        elif percentage >= 80:
+            grade = "A"
+        elif percentage >= 70:
+           grade = "B"
+        elif percentage >= 60:
+           grade = "C"
+        elif percentage >= 50:
+           grade = "D"
+        else:
+          grade = "F"
+
         db.collection("students").document(roll).set({
             "roll": roll,
             "name": name,
@@ -31,7 +45,8 @@ def add_student():
             "maths": maths,
             "science": science,
             "total": total,
-            "percentage": percentage
+            "percentage": percentage,
+            "grade": grade
         })
 
         return "Student Result Saved Successfully!"
