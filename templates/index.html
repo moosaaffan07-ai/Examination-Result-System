@@ -2,15 +2,25 @@
 <html>
 <head>
     <title>Examination Result System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
+
+<div class="container">
 
 <h1>Examination Result System</h1>
 
-<p>Welcome! Flask is working.</p>
+<p style="text-align:center;">
+Welcome! Flask is working.
+</p>
 
-<a href="/add">Add Student</a>
-<a href="/report">Search Result</a>
+<div class="menu">
+    <a href="/add">➕ Add Student</a>
+    <a href="/report">📄 Search Result</a>
+</div>
+
+</div>
 
 </body>
 </html>
