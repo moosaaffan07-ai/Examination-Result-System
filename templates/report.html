@@ -1,51 +1,78 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 
-<html>
+{% block title %}Search Report | Examination Result System{% endblock %}
 
-<head>
+{% block content %}
+<div class="page-card">
+    <div class="page-header">
+        <h1>Search Student</h1>
+        <p>Enter a roll number to view the full examination report.</p>
+    </div>
 
-<title>Student Report</title>
+    <form method="POST" class="form search-form">
+        <div class="search-bar">
+            <input
+                type="text"
+                id="roll"
+                name="roll"
+                placeholder="Enter roll number..."
+                value="{{ roll or '' }}"
+                required>
+            <button type="submit" class="btn btn-primary btn-search">Search</button>
+        </div>
+    </form>
 
-</head>
+    {% if student %}
+    <div class="report-card">
+        <div class="report-header">
+            <div>
+                <p class="report-label">Student Report</p>
+                <h2 class="report-name">{{ student.name }}</h2>
+                <p class="report-roll">
+                    Roll No. {{ student.roll }}
+                    {% if student.class %} &middot; Class {{ student.class }}{% endif %}
+                </p>
+            </div>
+            <div class="report-badges">
+                {% set status = student.status if student.status else ('Pass' if student.percentage >= 50 else 'Fail') %}
+                <span class="status-badge status-{{ status | lower }}">{{ status }}</span>
+                <div class="grade-badge grade-{{ student.grade | replace('+', 'plus') }}">
+                    {{ student.grade }}
+                </div>
+            </div>
+        </div>
 
-<body>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <span class="stat-label">English</span>
+                <span class="stat-value">{{ student.english }}</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Maths</span>
+                <span class="stat-value">{{ student.maths }}</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Science</span>
+                <span class="stat-value">{{ student.science }}</span>
+            </div>
+            <div class="stat-box highlight">
+                <span class="stat-label">Total</span>
+                <span class="stat-value">{{ student.total }}</span>
+            </div>
+            <div class="stat-box highlight">
+                <span class="stat-label">Percentage</span>
+                <span class="stat-value">{{ "%.1f"|format(student.percentage) }}%</span>
+            </div>
+        </div>
 
-<h2>Search Student</h2>
-
-<form method="POST">
-
-Roll Number
-
-<input type="text" name="roll">
-
-<input type="submit" value="Search">
-
-</form>
-
-{% if student %}
-
-<hr>
-
-<h3>Student Report</h3>
-
-<p>Name : {{student.name}}</p>
-
-<p>Roll : {{student.roll}}</p>
-
-<p>English : {{student.english}}</p>
-
-<p>Maths : {{student.maths}}</p>
-
-<p>Science : {{student.science}}</p>
-
-<p>Total : {{student.total}}</p>
-
-<p>Percentage : {{student.percentage}}</p>
-
-<p><strong>Grade:</strong> {{ student.grade }}</p>
-
-{% endif %}
-
-</body>
-
-</html>
+        <div class="report-actions">
+            <a href="{{ url_for('edit_student', roll=student.roll) }}" class="btn btn-secondary btn-sm">Edit Result</a>
+            <form method="POST" action="{{ url_for('delete_student', roll=student.roll) }}" class="inline-form"
+                  onsubmit="return confirm('Delete this student record permanently?');">
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

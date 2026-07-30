@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}All Students | Examination Result System{% endblock %}
+
+{% block content %}
+<div class="page-card page-card-wide">
+    <div class="page-header row-header">
+        <div>
+            <h1>All Students</h1>
+            <p>View, search, edit, or delete student examination records.</p>
+        </div>
+        <a href="{{ url_for('export_csv') }}" class="btn btn-secondary btn-sm">
+            Export CSV
+        </a>
+    </div>
+
+    <form method="GET" class="filters-bar">
+        <input
+            type="text"
+            name="q"
+            placeholder="Search by roll, name, or class..."
+            value="{{ query }}">
+
+        <select name="status">
+            <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All Status</option>
+            <option value="pass" {% if status_filter == 'pass' %}selected{% endif %}>Pass Only</option>
+            <option value="fail" {% if status_filter == 'fail' %}selected{% endif %}>Fail Only</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+    </form>
+
+    {% if students %}
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Roll</th>
+                    <th>Name</th>
+                    <th>Class</th>
+                    <th>Total</th>
+                    <th>%</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td><strong>{{ student.roll }}</strong></td>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.class or '—' }}</td>
+                    <td>{{ student.total }}</td>
+                    <td>{{ "%.1f"|format(student.percentage) }}%</td>
+                    <td>
+                        <span class="grade-pill grade-{{ student.grade | replace('+', 'plus') }}">
+                            {{ student.grade }}
+                        </span>
+                    </td>
+                    <td>
+                        {% set status = student.status if student.status else ('Pass' if student.percentage >= 50 else 'Fail') %}
+                        <span class="status-badge status-{{ status | lower }}">{{ status }}</span>
+                    </td>
+                    <td class="actions-cell">
+                        <a href="{{ url_for('report', roll=student.roll) }}" class="btn-icon" title="View">View</a>
+                        <a href="{{ url_for('edit_student', roll=student.roll) }}" class="btn-icon edit" title="Edit">Edit</a>
+                        <form method="POST" action="{{ url_for('delete_student', roll=student.roll) }}" class="inline-form"
+                              onsubmit="return confirm('Delete student {{ student.name }} (Roll {{ student.roll }})?');">
+                            <button type="submit" class="btn-icon delete" title="Delete">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p class="table-footer">{{ students | length }} student(s) found</p>
+    {% else %}
+    <div class="empty-state">
+        <p>No students found.</p>
+        <a href="{{ url_for('add_student') }}" class="btn btn-primary btn-sm">Add First Student</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

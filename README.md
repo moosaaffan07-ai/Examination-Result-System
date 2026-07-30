@@ -4,11 +4,15 @@ A web application developed using Flask and Firebase Firestore to manage student
 
 ## Features
 
-- Add student details
-- Calculate total marks
-- Calculate percentage
+- Dashboard with statistics (total, pass/fail, average, grade distribution)
+- Add student details with class/section
+- Calculate total marks, percentage, and grade automatically
+- Pass/Fail status (50% threshold)
+- View all students with search and filter
+- Edit and delete student records
+- Search student report by roll number
+- Export all results to CSV
 - Store results in Firebase Firestore
-- Search student report using Roll Number
 
 ## Technologies Used
 

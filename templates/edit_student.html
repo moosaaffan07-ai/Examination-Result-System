@@ -1,29 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}Add Student | Examination Result System{% endblock %}
+{% block title %}Edit Student | Examination Result System{% endblock %}
 
 {% block content %}
 <div class="page-card">
     <div class="page-header">
-        <h1>Add Student</h1>
-        <p>Fill in the details below to save a new examination result.</p>
+        <h1>Edit Student</h1>
+        <p>Update marks for Roll No. {{ student.roll }}</p>
     </div>
 
     <form method="POST" class="form">
+        <input type="hidden" name="roll" value="{{ student.roll }}">
+
         <div class="form-section">
             <h2 class="form-section-title">Student Info</h2>
             <div class="form-grid two-col">
                 <div class="field">
-                    <label for="roll">Roll Number</label>
-                    <input type="text" id="roll" name="roll" placeholder="e.g. 101" required>
+                    <label>Roll Number</label>
+                    <input type="text" value="{{ student.roll }}" disabled>
                 </div>
                 <div class="field">
                     <label for="name">Student Name</label>
-                    <input type="text" id="name" name="name" placeholder="Full name" required>
+                    <input type="text" id="name" name="name" value="{{ student.name }}" required>
                 </div>
                 <div class="field">
                     <label for="class_name">Class / Section</label>
-                    <input type="text" id="class_name" name="class_name" placeholder="e.g. 10-A">
+                    <input type="text" id="class_name" name="class_name" value="{{ student.class or '' }}" placeholder="e.g. 10-A">
                 </div>
             </div>
         </div>
@@ -33,22 +35,23 @@
             <div class="form-grid three-col">
                 <div class="field">
                     <label for="english">English</label>
-                    <input type="number" id="english" name="english" placeholder="0 – 100" min="0" max="100" required>
+                    <input type="number" id="english" name="english" value="{{ student.english }}" min="0" max="100" required>
                 </div>
                 <div class="field">
                     <label for="maths">Maths</label>
-                    <input type="number" id="maths" name="maths" placeholder="0 – 100" min="0" max="100" required>
+                    <input type="number" id="maths" name="maths" value="{{ student.maths }}" min="0" max="100" required>
                 </div>
                 <div class="field">
                     <label for="science">Science</label>
-                    <input type="number" id="science" name="science" placeholder="0 – 100" min="0" max="100" required>
+                    <input type="number" id="science" name="science" value="{{ student.science }}" min="0" max="100" required>
                 </div>
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary">
-            Save Student Result
-        </button>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Update Result</button>
+            <a href="{{ url_for('students_list') }}" class="btn btn-secondary">Cancel</a>
+        </div>
     </form>
 </div>
 {% endblock %}

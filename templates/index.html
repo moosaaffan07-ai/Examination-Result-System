@@ -1,26 +1,97 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Examination Result System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block title %}Home | Examination Result System{% endblock %}
 
-<div class="container">
+{% block content %}
+<section class="hero hero-compact">
+    <div class="hero-badge">Dashboard</div>
+    <h1 class="hero-title">Examination Result System</h1>
+    <p class="hero-subtitle">
+        Manage student results, track performance, and export reports — all in one place.
+    </p>
+</section>
 
-<h1>Examination Result System</h1>
-
-<p style="text-align:center;">
-Welcome! Flask is working.
-</p>
-
-<div class="menu">
-    <a href="/add">➕ Add Student</a>
-    <a href="/report">📄 Search Result</a>
+<div class="stats-row">
+    <div class="dash-card">
+        <span class="dash-label">Total Students</span>
+        <span class="dash-value">{{ stats.total }}</span>
+    </div>
+    <div class="dash-card pass">
+        <span class="dash-label">Passed</span>
+        <span class="dash-value">{{ stats.passed }}</span>
+    </div>
+    <div class="dash-card fail">
+        <span class="dash-label">Failed</span>
+        <span class="dash-value">{{ stats.failed }}</span>
+    </div>
+    <div class="dash-card">
+        <span class="dash-label">Average %</span>
+        <span class="dash-value">{{ stats.average }}%</span>
+    </div>
 </div>
 
+{% if stats.grades %}
+<div class="page-card page-card-wide grade-overview">
+    <h2 class="section-title">Grade Distribution</h2>
+    <div class="grade-bars">
+        {% for grade, count in stats.grades.items() %}
+        <div class="grade-bar-item">
+            <span class="grade-pill grade-{{ grade | replace('+', 'plus') }}">{{ grade }}</span>
+            <div class="grade-bar-track">
+                <div class="grade-bar-fill grade-{{ grade | replace('+', 'plus') }}"
+                     style="width: {{ (count / stats.total * 100) | round(1) }}%"></div>
+            </div>
+            <span class="grade-count">{{ count }}</span>
+        </div>
+        {% endfor %}
+    </div>
 </div>
+{% endif %}
 
-</body>
-</html>
+<div class="action-grid">
+    <a href="{{ url_for('add_student') }}" class="action-card">
+        <div class="action-icon add-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"/>
+            </svg>
+        </div>
+        <h3>Add Student</h3>
+        <p>Enter roll number, name, and subject marks to save results.</p>
+        <span class="action-arrow">→</span>
+    </a>
+
+    <a href="{{ url_for('students_list') }}" class="action-card">
+        <div class="action-icon list-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+            </svg>
+        </div>
+        <h3>All Students</h3>
+        <p>View the full list, search, edit, or delete student records.</p>
+        <span class="action-arrow">→</span>
+    </a>
+
+    <a href="{{ url_for('report') }}" class="action-card">
+        <div class="action-icon search-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="7"/>
+                <path d="M20 20l-3-3"/>
+            </svg>
+        </div>
+        <h3>Search Result</h3>
+        <p>Look up any student report using their roll number.</p>
+        <span class="action-arrow">→</span>
+    </a>
+
+    <a href="{{ url_for('export_csv') }}" class="action-card">
+        <div class="action-icon export-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>
+            </svg>
+        </div>
+        <h3>Export CSV</h3>
+        <p>Download all student results as a spreadsheet file.</p>
+        <span class="action-arrow">→</span>
+    </a>
+</div>
+{% endblock %}
