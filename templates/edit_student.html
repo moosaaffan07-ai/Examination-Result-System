@@ -48,6 +48,29 @@
             </div>
         </div>
 
+        <div class="form-section live-preview-section">
+            <h2 class="form-section-title">Live Result Preview</h2>
+            <div class="live-preview-grid">
+                <div class="preview-stat">
+                    <span class="stat-label">Total Marks</span>
+                    <span class="stat-value" id="preview-total">{{ student.total }}</span>
+                </div>
+                <div class="preview-stat">
+                    <span class="stat-label">Percentage</span>
+                    <span class="stat-value" id="preview-percentage">{{ "%.1f"|format(student.percentage) }}%</span>
+                </div>
+                <div class="preview-stat">
+                    <span class="stat-label">Grade</span>
+                    <span class="grade-pill grade-{{ student.grade | replace('+', 'plus') }}" id="preview-grade">{{ student.grade }}</span>
+                </div>
+                <div class="preview-stat">
+                    {% set status = student.status if student.status else ('Pass' if student.percentage >= 50 else 'Fail') %}
+                    <span class="stat-label">Status</span>
+                    <span class="status-badge status-{{ status | lower }}" id="preview-status">{{ status }}</span>
+                </div>
+            </div>
+        </div>
+
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Update Result</button>
             <a href="{{ url_for('students_list') }}" class="btn btn-secondary">Cancel</a>

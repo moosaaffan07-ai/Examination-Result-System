@@ -40,27 +40,31 @@ def student_status(student):
 
 def parse_mark(value, subject):
     try:
-        mark = int(value)
+        mark = float(value)
     except (TypeError, ValueError):
         raise ValueError(f"{subject} marks must be a valid number.")
 
     if mark < 0 or mark > 100:
         raise ValueError(f"{subject} marks must be between 0 and 100.")
 
-    return mark
+    return int(mark) if mark.is_integer() else round(mark, 2)
 
 
 def build_student_record(roll, name, english, maths, science, class_name="", existing=None):
-    total = english + maths + science
+    total = round(english + maths + science, 2)
     percentage = round(total / 3, 2)
     grade = calculate_grade(percentage)
     status = "Pass" if percentage >= PASS_THRESHOLD else "Fail"
     now = utc_now_iso()
 
+    created_at = now
+    if existing and isinstance(existing, dict) and existing.get("created_at"):
+        created_at = existing["created_at"]
+
     record = {
-        "roll": roll,
-        "name": name,
-        "class": class_name,
+        "roll": str(roll).strip(),
+        "name": str(name).strip(),
+        "class": str(class_name).strip(),
         "english": english,
         "maths": maths,
         "science": science,
@@ -69,14 +73,14 @@ def build_student_record(roll, name, english, maths, science, class_name="", exi
         "grade": grade,
         "status": status,
         "updated_at": now,
-        "created_at": existing.get("created_at", now) if existing else now,
+        "created_at": created_at,
     }
     return record
 
 
 def get_all_students():
     students = [doc.to_dict() for doc in db.collection("students").stream()]
-    students.sort(key=lambda student: student.get("roll", ""))
+    students.sort(key=lambda student: str(student.get("roll", "")).lower())
     return students
 
 
@@ -93,14 +97,14 @@ def get_dashboard_stats(students):
 
     passed = sum(1 for student in students if student_status(student) == "Pass")
     failed = len(students) - passed
-    average = round(sum(student.get("percentage", 0) for student in students) / len(students), 1)
+    average = round(sum(float(student.get("percentage") or 0) for student in students) / len(students), 1)
 
     grades = {}
     for student in students:
         grade = student.get("grade", "F")
         grades[grade] = grades.get(grade, 0) + 1
 
-    top_student = max(students, key=lambda student: student.get("percentage", 0))
+    top_student = max(students, key=lambda student: float(student.get("percentage") or 0))
 
     return {
         "total": len(students),
@@ -143,9 +147,9 @@ def students_list():
     if query:
         students = [
             student for student in students
-            if query in student.get("roll", "").lower()
-            or query in student.get("name", "").lower()
-            or query in student.get("class", "").lower()
+            if query in str(student.get("roll", "")).lower()
+            or query in str(student.get("name", "")).lower()
+            or query in str(student.get("class", "")).lower()
         ]
 
     if status_filter == "pass":
